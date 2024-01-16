@@ -1,4 +1,5 @@
 use gilrs::{Gilrs, Event, EventType};
+use std::f64::consts::PI;
 use libm::atan2f;
 fn main()
 {
@@ -41,8 +42,8 @@ fn main()
                 _ => (),
             };
 
-            angle_left = atan2f(stick_left[1],stick_left[0]);
-            angle_right = atan2f(stick_right[1],stick_right[0]);
+            angle_left = (atan2f(stick_left[1],stick_left[0])*(180.0/PI) as f32) + 180.0 % 360.0;
+            angle_right = (atan2f(stick_right[1],stick_right[0])*(180.0/PI) as f32) + 180.0 % 360.0;
             
             println!("left angle:{} - right angle:{}", angle_left, angle_right);
             // println!("left:{},{} - right:{},{}", stick_left[0], stick_left[1], stick_right[0], stick_right[1]);
