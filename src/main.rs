@@ -1,5 +1,4 @@
 use gilrs::{Gilrs, Button, Event};
-
 fn main()
 {
 
@@ -11,11 +10,15 @@ fn main()
     }
     
     let mut active_gamepad = None;
+    let mut stick_lx: f32;
+    let mut stick_ly: f32;
+    let mut stick_rx: f32;
+    let mut stick_ry: f32;
     
     loop {
         // Examine new events
-        while let Some(Event { id, event, time }) = gilrs.next_event() {
-            println!("{:?} New event from {}: {:?}", time, id, event);
+        while let Some(Event { id, event, .. }) = gilrs.next_event() {
+            println!("{:?}", event);
             active_gamepad = Some(id);
         }
     
