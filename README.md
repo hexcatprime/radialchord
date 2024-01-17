@@ -19,3 +19,5 @@ This is predominantly a Rust programming exercise; it's my first experience with
 My intended solution takes inspriation from the chording concept from stenographer's keyboards. Concurrent keystrokes are combined (chorded) to form complete syllables. In this implementation, the user would select a group of letters using the left joystick and choose which group letter to "print" with the right joystick.
 
 The letter groupings are configurable, and based on english letter frequency right now which is largely unimportant. What poses to be the most interesting part of this project is input presentation and visual feedback. I'm applying the chording concept to radial menus found in console video games. Something like apex legend's ping wheel or fortnite's emote menu. Those menus are designed for joystick inputs, so it should feel natural for someone to type using two (hopefully).
+
+The name Radial Chord comes from the combination of these two concepts, I may change it later but I chose it because it sounds cool.
