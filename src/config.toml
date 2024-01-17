@@ -17,14 +17,16 @@ note_6 = a
 note_7 = h
 
 [chord_1]
-note_0 = 
-note_1 =
-note_2 =
-note_3 =
-note_4 =
-note_5 =
-note_6 =
-note_7 =
+note_0 = 0
+note_1 = 1
+note_2 = 2
+note_3 = 3
+note_4 = 4
+note_5 = 5
+note_6 = 6
+note_7 = 7
+note_8 = 8
+note_9 = 0
 
 [chord_2]
 note_0 =

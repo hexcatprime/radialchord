@@ -1,9 +1,11 @@
-use gilrs::{Gilrs, Event, EventType, ev::filter::deadzone};
+use gilrs::{Gilrs, Event, EventType};
 use std::f64::consts::PI;
 use libm::atan2f;
+
+const ZONE_ANGLE: f32 = 45.0;
+
 fn main()
 {
-
     let mut gilrs = Gilrs::new().unwrap();
     
     // Iterate over all connected gamepads
@@ -15,10 +17,11 @@ fn main()
     let mut stick_right: [f32; 2] =[0.0,0.0];
     let mut angle_left: f32 = atan2f(stick_left[1],stick_left[0]);
     let mut angle_right: f32 = atan2f(stick_right[1],stick_right[0]);
-    
+    let mut zone_left: i32 = 0;
+    let mut zone_right: i32 = 0;
     loop 
     {
-        while let Some(event) = deadzone(gilrs.next_event(), &mut gilrs)
+        while let Some(event) = gilrs.next_event()
         {
             match event 
             {
@@ -43,9 +46,16 @@ fn main()
 
             angle_left = (atan2f(stick_left[1],stick_left[0])*(180.0/PI) as f32) + 180.0 % 360.0;
             angle_right = (atan2f(stick_right[1],stick_right[0])*(180.0/PI) as f32) + 180.0 % 360.0;
-            
-            println!("left angle:{} - right angle:{}", angle_left, angle_right);
+            zone_left = zone_check(angle_left);
+            zone_right = zone_check(angle_right);
+            println!("left zone:{} - right zone:{} | left angle:{} - right angle:{}", zone_left, zone_right, angle_left, angle_right);
+            // println!("left angle:{} - right angle:{}", angle_left, angle_right);
             // println!("left:{},{} - right:{},{}", stick_left[0], stick_left[1], stick_right[0], stick_right[1]);
         }
     }
+}
+
+fn zone_check(x: f32) -> i32
+{
+(x / ZONE_ANGLE) as i32
 }
