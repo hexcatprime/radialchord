@@ -1,4 +1,4 @@
-use gilrs::{Gilrs, Event, EventType};
+use gilrs::{Gilrs, Event, EventType, ev::filter::deadzone};
 use std::f64::consts::PI;
 use libm::atan2f;
 fn main()
@@ -18,9 +18,8 @@ fn main()
     
     loop 
     {
-        while let Some(event) = gilrs.next_event() 
+        while let Some(event) = deadzone(gilrs.next_event(), &mut gilrs)
         {
-
             match event 
             {
                 Event { event: EventType::AxisChanged(gilrs::Axis::LeftStickX, event_value, _), ..} => 
