@@ -48,9 +48,18 @@ fn main()
             angle_right = (atan2f(stick_right[1],stick_right[0])*(180.0/PI) as f32) + 180.0 % 360.0;
             zone_left = zone_check(angle_left);
             zone_right = zone_check(angle_right);
-            println!("left zone:{} - right zone:{} | left angle:{} - right angle:{}", zone_left, zone_right, angle_left, angle_right);
-            // println!("left angle:{} - right angle:{}", angle_left, angle_right);
-            // println!("left:{},{} - right:{},{}", stick_left[0], stick_left[1], stick_right[0], stick_right[1]);
+
+            print!("left zone:{} - right zone:{} | ", zone_left, zone_right);
+            print!("left angle:{} - right angle:{} | ", angle_left, angle_right);
+            println!("left stick:{},{} - right stick:{},{} | ", stick_left[0], stick_left[1], stick_right[0], stick_right[1]);
+            if (stick_left[1].abs() + stick_left[0].abs() <= 0.05)
+            {
+                println!("\nLEFT STICK DEAD\n")
+            }
+            if (stick_right[1].abs() + stick_right[0].abs() <= 0.05)
+            {
+                println!("\nRIGHT STICK DEAD\n")
+            }
         }
     }
 }
