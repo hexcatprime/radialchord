@@ -1,4 +1,5 @@
 use gilrs::{Gilrs, Event, EventType};
+use enigo::*;
 use std::f64::consts::PI;
 use libm::atan2f;
 
@@ -7,6 +8,7 @@ const ZONE_ANGLE: f32 = 45.0;
 fn main()
 {
     let mut gilrs = Gilrs::new().unwrap();
+    let mut enigo = Enigo::new();
     
     // Iterate over all connected gamepads
     for (_id, gamepad) in gilrs.gamepads() {
