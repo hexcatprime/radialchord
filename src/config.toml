@@ -6,84 +6,12 @@ right = 0
 left = 0.5
 right = 0.5
 
-[chord_0]
-note_0 = o
-note_1 = s
-note_2 = e
-note_3 = n
-note_4 = t
-note_5 = i
-note_6 = a
-note_7 = h
-
-[chord_1]
-note_0 = 0
-note_1 = 1
-note_2 = 2
-note_3 = 3
-note_4 = 4
-note_5 = 5
-note_6 = 6
-note_7 = 7
-note_8 = 8
-note_9 = 0
-
-[chord_2]
-note_0 =
-note_1 =
-note_2 =
-note_3 =
-note_4 =
-note_5 =
-note_6 =
-note_7 =
-
-[chord_3]
-note_0 = u
-note_1 = y
-note_2 = r
-note_3 = c
-note_4 = l
-note_5 = m 
-note_6 = d
-note_7 = w
-
-[chord_4]
-note_0 = 
-note_1 =
-note_2 =
-note_3 =
-note_4 =
-note_5 =
-note_6 =
-note_7 =
-
-[chord_5]
-note_0 =
-note_1 =
-note_2 =
-note_3 =
-note_4 =
-note_5 =
-note_6 =
-note_7 =
-
-[chord_6]
-note_0 =
-note_1 =
-note_2 =
-note_3 =
-note_4 =
-note_5 =
-note_6 =
-note_7 =
-
-[chord_7]
-note_0 = b
-note_1 = x
-note_2 = f
-note_3 = v
-note_4 = g
-note_5 = k
-note_6 = p
-note_7 = j
+[chords]
+chord_0 = "osentiah"
+chord_1 = "0123456789"
+chord_2 = ""
+chord_3 = "uyrclmdw"
+chord_4 = ""
+chord_5 = ""
+chord_6 = ""
+chord_7 = "bxfvgkpj"

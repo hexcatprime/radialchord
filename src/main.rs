@@ -1,72 +1,63 @@
-use gilrs::{Gilrs, Event, EventType};
+use gilrs::{Gilrs, Gamepad};
 use enigo::*;
-use std::f64::consts::PI;
 use libm::atan2f;
+use serde::de::value;
 
 const ZONE_ANGLE: f32 = 45.0;
+struct Joystick
+{
+    axis_x: f32,
+    axis_y: f32,
+    angle: f32,
+    zone: f32,
+}
+
+impl Joystick
+{
+    pub fn new(axis_x_unclamped: f32, axis_y_unclamped: f32) -> Self
+    {
+        let axis_x: f32 = axis_x_unclamped.clamp(1.0,-1.0);
+        let axis_y: f32 = axis_y_unclamped.clamp(1.0,-1.0);
+        let angle: f32 = atan2f(axis_y, axis_x);
+        let zone: f32 = zone_check(angle);
+        Joystick {axis_x, axis_y, angle, zone}
+    }
+    pub fn set(&mut self, axis_x_unclamped: f32, axis_y_unclamped: f32)
+    {
+        self.axis_x = axis_x_unclamped.clamp(1.0,-1.0);
+        self.axis_y = axis_y_unclamped.clamp(1.0,-1.0);
+        self.angle = atan2f(self.axis_y, self.axis_y);
+        self.zone = zone_check(self.angle);
+    }
+}
 
 fn main()
 {
     let mut gilrs = Gilrs::new().unwrap();
     let mut enigo = Enigo::new();
+    let mut stick_left: Joystick = Joystick::new(0.0,0.0);
+    let mut stick_right: Joystick = Joystick::new(0.0,0.0);
+    let mut active_gamepad: Gamepad;
     
     // Iterate over all connected gamepads
     for (_id, gamepad) in gilrs.gamepads() {
         println!("{} is {:?}", gamepad.name(), gamepad.power_info());
     }
-
-    let mut stick_left: [f32; 2] = [0.0,0.0];
-    let mut stick_right: [f32; 2] =[0.0,0.0];
-    let mut angle_left: f32 = atan2f(stick_left[1],stick_left[0]);
-    let mut angle_right: f32 = atan2f(stick_right[1],stick_right[0]);
-    let mut zone_left: i32 = 0;
-    let mut zone_right: i32 = 0;
+    
     loop 
     {
-        while let Some(event) = gilrs.next_event()
+        while let Some(ev) = gilrs.next_event()
         {
-            match event 
-            {
-                Event { event: EventType::AxisChanged(gilrs::Axis::LeftStickX, event_value, _), ..} => 
-                {
-                    stick_left[0] = event_value;
-                }
-                Event { event: EventType::AxisChanged(gilrs::Axis::LeftStickY, event_value, _), ..} => 
-                {
-                    stick_left[1] = event_value;
-                }
-                Event { event: EventType::AxisChanged(gilrs::Axis::RightStickX, event_value, _), ..} => 
-                {
-                    stick_right[0] = event_value;
-                }
-                Event { event: EventType::AxisChanged(gilrs::Axis::RightStickY, event_value, _), ..} => 
-                {
-                    stick_right[1] = event_value;
-                }
-                _ => (),
-            };
-
-            angle_left = (atan2f(stick_left[1],stick_left[0])*(180.0/PI) as f32) + 180.0 % 360.0;
-            angle_right = (atan2f(stick_right[1],stick_right[0])*(180.0/PI) as f32) + 180.0 % 360.0;
-            zone_left = zone_check(angle_left);
-            zone_right = zone_check(angle_right);
-
-            print!("left zone:{} - right zone:{} | ", zone_left, zone_right);
-            print!("left angle:{} - right angle:{} | ", angle_left, angle_right);
-            println!("left stick:{},{} - right stick:{},{} | ", stick_left[0], stick_left[1], stick_right[0], stick_right[1]);
-            if (stick_left[1].abs() + stick_left[0].abs() <= 0.05)
-            {
-                println!("\nLEFT STICK DEAD\n")
-            }
-            if (stick_right[1].abs() + stick_right[0].abs() <= 0.05)
-            {
-                println!("\nRIGHT STICK DEAD\n")
-            }
+            active_gamepad = gilrs.gamepad(ev.id);
+            stick_left.set(active_gamepad.value(gilrs::Axis::LeftStickX), active_gamepad.value(gilrs::Axis::LeftStickY));
+            stick_right.set(active_gamepad.value(gilrs::Axis::RightStickX), active_gamepad.value(gilrs::Axis::RightStickY));
         }
+
+        
     }
 }
 
-fn zone_check(x: f32) -> i32
+fn zone_check(x: f32) -> f32
 {
-(x / ZONE_ANGLE) as i32
+x / ZONE_ANGLE
 }
