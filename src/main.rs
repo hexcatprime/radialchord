@@ -1,6 +1,7 @@
 use gilrs::{Gilrs, Gamepad};
 // use enigo::*;
 use libm::atan2f;
+use std::f64::consts::PI;
 // use serde::de::value;
 
 const ZONE_ANGLE: f32 = 45.0;
@@ -26,12 +27,12 @@ impl Joystick
     {
         self.axis_x = axis_x_unclamped.clamp(-1.0,1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0,1.0);
-        self.angle = atan2f(self.axis_y, self.axis_y);
-        self.zone = zone_check(self.angle);
+        self.angle = (atan2f(self.axis_y, self.axis_x)*(180.0/PI as f32) + 360.0) % 360.0;
+        self.zone = (self.angle / ZONE_ANGLE) as i32;
     }
     pub fn print(&self)
     {
-        println!("Axes: ({},{})\tAngle: ({})\tZone: ({})", self.axis_x,self.axis_y,self.angle, self.zone);
+        print!("\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})", self.axis_x,self.axis_y,self.angle, self.zone);
     }
 }
 
@@ -45,7 +46,7 @@ fn main()
     
     // Iterate over all connected gamepads
     for (_id, gamepad) in gilrs.gamepads() {
-        println!("{} is {:?}", gamepad.name(), gamepad.power_info());
+        println!("{} is {:?}\n", gamepad.name(), gamepad.power_info());
     }
     
     loop 
@@ -58,11 +59,5 @@ fn main()
         }
 
         stick_left.print();
-        stick_right.print();
     }
-}
-
-fn zone_check(x: f32) -> i32
-{
-(x / ZONE_ANGLE) as i32
 }
