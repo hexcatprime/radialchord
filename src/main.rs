@@ -1,19 +1,11 @@
 use gilrs::{Gilrs, Gamepad};
-use serde::{Serialize, Deserialize};
-use toml::from_str;
-use enigo::*;
-use std::collections::HashMap;
-use libm::atan2f;
+use toml::Table;
+use enigo::{Key, Enigo, *};
 use std::f64::consts::PI;
 
 const ZONE_ANGLE: f32 = 45.0;
 const ZONE_OFFSET: f32 = 45.0;
 
-#[derive(Serialize, Deserialize)]
-struct Chord
-{
-    notes: Vec<enigo::keycodes::Key>
-}
 struct Joystick
 {
     axis_x: f32,
@@ -38,9 +30,9 @@ impl Joystick
     {
         self.axis_x = axis_x_unclamped.clamp(-1.0,1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0,1.0);
-        self.angle = (atan2f(self.axis_y, self.axis_x)*(180.0/PI as f32) + 360.0) % 360.0;
+        self.angle = (self.axis_y.atan2(self.axis_x)*(180.0/PI as f32) + 360.0) % 360.0;
         self.zone = ((self.angle + ZONE_OFFSET) / ZONE_ANGLE) as i32;
-        self.active = (false);
+        self.active = 0.75 <= (self.axis_x.powi(2) + self.axis_y.powi(2)) && (self.axis_x.powi(2) + self.axis_y.powi(2)) <= 1.0;
     }
     pub fn _print(&self)
     {
@@ -55,6 +47,10 @@ fn main()
     let mut stick_chord: Joystick = Joystick::new();
     let mut stick_note: Joystick = Joystick::new();
     let mut active_gamepad: Gamepad;
+
+    let keybinds: Table  = load_keybinds();
+    println!("{:?}", keybinds);
+    // enigo.key_click(Key::try_from(keybinds["chord_0"]["note_0"]));
     // Iterate over all connected gamepads
     for (_id, gamepad) in gilrs.gamepads() {
         println!("{} is {:?}\n", gamepad.name(), gamepad.power_info());
@@ -73,11 +69,11 @@ fn main()
 
 fn load_keybinds() -> Table
 {
-    let path = std::path::Path::new("./keybinds.toml");
-    let file: &str = match std::fs::read_to_string(path) {
-        Ok(f) => &f,
+    let path = std::path::Path::new("./src/keybinds.toml");
+    let file: String = match std::fs::read_to_string(path) {
+        Ok(f) => f,
         Err(e) => panic!("{}", e),
     };
-    let chord_map: HashMap<String, Chord> = from_str(file).unwrap();
-    
+
+    file.parse::<Table>().unwrap()
 }
