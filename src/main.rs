@@ -1,6 +1,7 @@
 use gilrs::{Gilrs, Gamepad};
 use toml::Table;
-use enigo::{Key, Enigo, *};
+// use enigo::*;
+// use enigo::Key::*;
 use std::f64::consts::PI;
 
 const ZONE_ANGLE: f32 = 45.0;
@@ -43,15 +44,16 @@ impl Joystick
 fn main()
 {
     let mut gilrs = Gilrs::new().unwrap();
-    let mut enigo = Enigo::new();
+    // let mut _enigo = Enigo::new();
     let mut stick_chord: Joystick = Joystick::new();
     let mut stick_note: Joystick = Joystick::new();
     let mut active_gamepad: Gamepad;
 
-    let keybinds: Table  = load_keybinds();
+    let keybinds: Table  = load_config("./src/keybinds.toml");
     println!("{:?}", keybinds);
-    // enigo.key_click(Key::try_from(keybinds["chord_0"]["note_0"]));
-    // Iterate over all connected gamepads
+    // let test_key: Key = Layout('A');
+    // println!("{:?}", test_key);
+
     for (_id, gamepad) in gilrs.gamepads() {
         println!("{} is {:?}\n", gamepad.name(), gamepad.power_info());
     }
@@ -67,9 +69,9 @@ fn main()
     }
 }
 
-fn load_keybinds() -> Table
+fn load_config(x: &str) -> Table
 {
-    let path = std::path::Path::new("./src/keybinds.toml");
+    let path = std::path::Path::new(x);
     let file: String = match std::fs::read_to_string(path) {
         Ok(f) => f,
         Err(e) => panic!("{}", e),
