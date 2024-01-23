@@ -1,7 +1,8 @@
+mod buttonmap;
+
 use gilrs::{Gilrs, Gamepad};
 use toml::Table;
 // use enigo::*;
-// use enigo::Key::*;
 use std::f64::consts::PI;
 
 const ZONE_ANGLE: f32 = 45.0;
