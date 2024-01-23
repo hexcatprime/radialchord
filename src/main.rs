@@ -1,9 +1,7 @@
-mod keystucts;
-
-use gilrs::{Gilrs, Gamepad};
-use toml::Table;
-// use enigo::*;
-use std::f64::consts::PI;
+use serde_json::Value;
+use enigo::Key;
+use gilrs::{Button, Gamepad, Gilrs};
+use std::{collections::HashMap, f32::consts::PI};
 
 const ZONE_ANGLE: f32 = 45.0;
 const ZONE_OFFSET: f32 = 45.0;
@@ -32,7 +30,7 @@ impl Joystick
     {
         self.axis_x = axis_x_unclamped.clamp(-1.0,1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0,1.0);
-        self.angle = (self.axis_y.atan2(self.axis_x)*(180.0/PI as f32) + 360.0) % 360.0;
+        self.angle = (self.axis_y.atan2(self.axis_x)*(180.0/PI) + 360.0) % 360.0;
         self.zone = ((self.angle + ZONE_OFFSET) / ZONE_ANGLE) as i32;
         self.active = 0.75 <= (self.axis_x.powi(2) + self.axis_y.powi(2)) && (self.axis_x.powi(2) + self.axis_y.powi(2)) <= 1.0;
     }
@@ -50,10 +48,8 @@ fn main()
     let mut stick_note: Joystick = Joystick::new();
     let mut active_gamepad: Gamepad;
 
-    let keybinds: Table  = load_config("./src/keybinds.toml");
-    println!("{:?}", keybinds);
-    // let test_key: Key = Layout('A');
-    // println!("{:?}", test_key);
+    let button_map: Value  = load_config("/home/dubsbol/Downloads/radialchord/src/buttonmap.json");
+    println!("{:?}", button_map);
 
     for (_id, gamepad) in gilrs.gamepads() {
         println!("{} is {:?}\n", gamepad.name(), gamepad.power_info());
@@ -70,7 +66,7 @@ fn main()
     }
 }
 
-fn load_config(x: &str) -> Table
+fn load_config(x: &str) -> Value
 {
     let path = std::path::Path::new(x);
     let file: String = match std::fs::read_to_string(path) {
@@ -78,5 +74,8 @@ fn load_config(x: &str) -> Table
         Err(e) => panic!("{}", e),
     };
 
-    file.parse::<Table>().unwrap()
+    let v: Value = serde_json::from_str(&file).unwrap()
+    let hm: HashMap<Button, Key> = HashMap::new();
+    for 
+
 }

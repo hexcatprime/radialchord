@@ -1,0 +1,103 @@
+{
+    "chord_neutal":
+    {
+        "note_0": "Layout(o)",
+        "note_1": "Layout(o)",
+        "note_2": "Layout(o)",
+        "note_3": "Layout(o)",
+        "note_4": "Layout(o)",
+        "note_5": "Layout(o)",
+        "note_6": "Layout(o)",
+        "note_7": "Layout(o)"
+    },
+    "chord_0":
+    {
+        "note_0": "Layout(o)",
+        "note_1": "Layout(s)",
+        "note_2": "Layout(e)",
+        "note_3": "Layout(n)",
+        "note_4": "Layout(t)",
+        "note_5": "Layout(i)",
+        "note_6": "Layout(a)",
+        "note_7": "Layout(h)"
+    },
+    "chord_1":
+    {
+        "note_0": "Layout(j)",
+        "note_1": "Layout(q)",
+        "note_2": "Layout(o)",
+        "note_3": "Layout(o)",
+        "note_4": "Layout(o)",
+        "note_5": "Layout(o)",
+        "note_6": "Layout(o)",
+        "note_7": "Layout(o)"
+    },
+    "chord_2":
+    {
+        "note_0": "Layout(u)",
+        "note_1": "Layout(y)",
+        "note_2": "Layout(r)",
+        "note_3": "Layout(c)",
+        "note_4": "Layout(l)",
+        "note_5": "Layout(m)",
+        "note_6": "Layout(d)",
+        "note_7": "Layout(w)"
+    },
+    "chord_3":
+    {
+        "note_0": "Layout(o)",
+        "note_1": "Layout(o)",
+        "note_2": "Layout(o)",
+        "note_3": "Layout(o)",
+        "note_4": "Layout(o)",
+        "note_5": "Layout(o)",
+        "note_6": "Layout(o)",
+        "note_7": "Layout(o)"
+    },
+    "chord_4":
+    {
+        "note_0": "Layout(b)",
+        "note_1": "Layout(x)",
+        "note_2": "Layout(f)",
+        "note_3": "Layout(v)",
+        "note_4": "Layout(g)",
+        "note_5": "Layout(k)",
+        "note_6": "Layout(p)",
+        "note_7": "Layout(z)"
+    },
+    "chord_5":
+    {
+        "note_0": "Layout(o)",
+        "note_1": "Layout(o)",
+        "note_2": "Layout(o)",
+        "note_3": "Layout(o)",
+        "note_4": "Layout(o)",
+        "note_5": "Layout(o)",
+        "note_6": "Layout(o)",
+        "note_7": "Layout(o)"
+    },
+    "chord_6":
+    {
+        "note_0": "Layout(0)",
+        "note_1": "Layout(1)",
+        "note_2": "Layout(2)",
+        "note_3": "Layout(3)",
+        "note_4": "Layout(4)",
+        "note_5": "Layout(5)",
+        "note_6": "Layout(6)",
+        "note_7": "Layout(7)",
+        "note_8": "Layout(8)",
+        "note_9": "Layout(9)"
+    },
+    "chord_7":
+    {
+        "note_0": "Layout(o)",
+        "note_1": "Layout(o)",
+        "note_2": "Layout(o)",
+        "note_3": "Layout(o)",
+        "note_4": "Layout(o)",
+        "note_5": "Layout(o)",
+        "note_6": "Layout(o)",
+        "note_7": "Layout(o)"
+    }
+}

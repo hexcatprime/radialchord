@@ -1,0 +1,17 @@
+{
+    "ZONE_ANGLE":
+    {
+        "left": 0.0,
+        "right": 0.0
+    },
+    "ZONE_OFFSET":
+    {
+        "left": 0.5,
+        "right": 0.5
+    },
+    "ZONE_DEADZONE":
+    {
+        "left": 0.5,
+        "right": 0.5
+    }
+}
