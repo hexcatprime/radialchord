@@ -1,4 +1,4 @@
-mod buttonmap;
+mod keystucts;
 
 use gilrs::{Gilrs, Gamepad};
 use toml::Table;

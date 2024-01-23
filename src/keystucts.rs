@@ -1,4 +1,4 @@
-pub mod buttonmap
+pub mod keystructs
 {
     use enigo::{Key, MouseButton};
     use gilrs::Button;
