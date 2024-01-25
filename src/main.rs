@@ -1,13 +1,17 @@
-use serde_json::Value;
-use enigo::Key;
+use enigo::{Key, MouseButton};
 use gilrs::{Button, Gamepad, Gilrs};
 use std::{collections::HashMap, f32::consts::PI};
 
-const ZONE_ANGLE: f32 = 45.0;
-const ZONE_OFFSET: f32 = 45.0;
-
+enum Combo
+{
+    Key(Key),
+    MouseButton(MouseButton),
+}
 struct Joystick
 {
+    zone_angle: f32,
+    zone_offset: f32,
+    zone_deadzone: f32,
     axis_x: f32,
     axis_y: f32,
     angle: f32,
@@ -17,21 +21,21 @@ struct Joystick
 
 impl Joystick
 {
-    pub fn new() -> Self
+    pub fn new( zone_angle: f32, zone_offset: f32, zone_deadzone: f32) -> Self
     {
         let axis_x: f32 = 0.0;
         let axis_y: f32 = 0.0;
         let angle: f32 = 0.0;
         let zone: i32 = 0;
         let active: bool = false;
-        Joystick {axis_x, axis_y, angle, zone, active}
+        Joystick {zone_angle, zone_offset, zone_deadzone, axis_x, axis_y, angle, zone, active}
     }
     pub fn set(&mut self, axis_x_unclamped: f32, axis_y_unclamped: f32)
     {
         self.axis_x = axis_x_unclamped.clamp(-1.0,1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0,1.0);
         self.angle = (self.axis_y.atan2(self.axis_x)*(180.0/PI) + 360.0) % 360.0;
-        self.zone = ((self.angle + ZONE_OFFSET) / ZONE_ANGLE) as i32;
+        self.zone = ((self.angle + self.zone_offset) / self.zone_angle) as i32;
         self.active = 0.75 <= (self.axis_x.powi(2) + self.axis_y.powi(2)) && (self.axis_x.powi(2) + self.axis_y.powi(2)) <= 1.0;
     }
     pub fn _print(&self)
@@ -44,16 +48,9 @@ fn main()
 {
     let mut gilrs = Gilrs::new().unwrap();
     // let mut _enigo = Enigo::new();
-    let mut stick_chord: Joystick = Joystick::new();
-    let mut stick_note: Joystick = Joystick::new();
+    let mut stick_chord: Joystick = Joystick::new(45.0, 45.0 , 50.0);
+    let mut stick_note: Joystick = Joystick::new(45.0, 45.0 , 50.0);
     let mut active_gamepad: Gamepad;
-
-    let button_map: Value  = load_config("/home/dubsbol/Downloads/radialchord/src/buttonmap.json");
-    println!("{:?}", button_map);
-
-    for (_id, gamepad) in gilrs.gamepads() {
-        println!("{} is {:?}\n", gamepad.name(), gamepad.power_info());
-    }
     
     loop 
     {
@@ -64,18 +61,4 @@ fn main()
             stick_note.set(active_gamepad.value(gilrs::Axis::RightStickX), active_gamepad.value(gilrs::Axis::RightStickY));
         }
     }
-}
-
-fn load_config(x: &str) -> Value
-{
-    let path = std::path::Path::new(x);
-    let file: String = match std::fs::read_to_string(path) {
-        Ok(f) => f,
-        Err(e) => panic!("{}", e),
-    };
-
-    let v: Value = serde_json::from_str(&file).unwrap()
-    let hm: HashMap<Button, Key> = HashMap::new();
-    for 
-
 }
