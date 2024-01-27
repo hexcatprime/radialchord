@@ -1,4 +1,4 @@
-use enigo::{Key, MouseButton};
+use enigo::{Key::*,MouseButton, keycodes, *};
 use gilrs::{Button, Gamepad, Gilrs};
 use std::{collections::HashMap, f32::consts::PI};
 
@@ -46,8 +46,10 @@ impl Joystick
 
 fn main()
 {
+    let chord_map = build_chord_map();
+    let key_map = build_key_map();
     let mut gilrs = Gilrs::new().unwrap();
-    // let mut _enigo = Enigo::new();
+    let mut _enigo = Enigo::new();
     let mut stick_chord: Joystick = Joystick::new(45.0, 45.0 , 50.0);
     let mut stick_note: Joystick = Joystick::new(45.0, 45.0 , 50.0);
     let mut active_gamepad: Gamepad;
@@ -61,4 +63,38 @@ fn main()
             stick_note.set(active_gamepad.value(gilrs::Axis::RightStickX), active_gamepad.value(gilrs::Axis::RightStickY));
         }
     }
+}
+
+fn build_key_map() -> HashMap<Button, Combo>
+{
+    let temp: HashMap<Button, Combo> = HashMap::new();
+    temp.insert(Button::South, Enter);
+    temp.insert(Button::East, Space);
+    temp.insert(Button::North, PageDown);
+    temp.insert(Button::West, PageUp);
+    temp.insert(Button::LeftTrigger, Right);
+    temp.insert(Button::LeftTrigger2, Control);
+    temp.insert(Button::RightTrigger, Left);
+    temp.insert(Button::RightTrigger2, Alt);
+    temp.insert(Button::Select, Tab);
+    temp.insert(Button::Start, Escape);
+    temp.insert(Button::DPadUp, UpArrow);
+    temp.insert(Button::DPadDown, DownArrow);
+    temp.insert(Button::DPadLeft, LeftArrow);
+    temp.insert(Button::DPadRight, RightArrow);
+    
+    temp
+}
+
+fn build_chord_map() -> Vec<Vec<Key>>
+{
+    let temp: Vec<Vec<Key>> = vec!
+    [
+        vec![Layout('o'), Layout('s'), Layout('e'), Layout('n'), Layout('t'), Layout('i'), Layout('a'), Layout('h')],
+        vec![Layout('j'), Layout('q'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o')],
+        vec![Layout('u'), Layout('y'), Layout('r'), Layout('c'), Layout('l'), Layout('m'), Layout('d'), Layout('w')],
+        vec![Layout('b'), Layout('x'), Layout('f'), Layout('v'), Layout('g'), Layout('k'), Layout('p'), Layout('z')],
+        vec![Layout('0'), Layout('1'), Layout('2'), Layout('3'), Layout('4'), Layout('5'), Layout('6'), Layout('7'), Layout('8'), Layout('9') ]
+    ];
+    temp
 }
