@@ -36,7 +36,7 @@ impl Joystick
     }
     pub fn print(&self)
     {
-        print!("\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2}, \tActive?: ({})", self.axis_x as i32,self.axis_y as i32,self.angle, self.zone, self.active);
+        print!("\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2}, \tActive?: ({})", self.axis_x,self.axis_y,self.angle, self.zone, self.active);
     }
 }
 
