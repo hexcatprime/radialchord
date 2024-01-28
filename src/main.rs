@@ -1,12 +1,8 @@
-use enigo::{Key::*, *};
-use gilrs::{ Gamepad, Gilrs};
-use std::f32::consts::PI;
+use enigo::{keycodes::Key::*, *};
+use gilrs::{Gamepad, Gilrs, Event, Button, EventType};
+use serde_json::Value;
+use std::{collections::HashMap, f32::consts::PI, option::Option};
 
-// enum Combo
-// {
-//     Key(Key),
-//     MouseButton(MouseButton),
-// }
 struct Joystick
 {
     zone_angle: f32,
@@ -46,6 +42,7 @@ impl Joystick
 
 fn main()
 {
+    let key_map = build_key_map();
     let chord_map = build_chord_map();
     // let key_map = build_key_map();
     let mut gilrs = Gilrs::new().unwrap();
@@ -55,14 +52,15 @@ fn main()
     let mut active_gamepad: Gamepad;
 
     let mut cached_key: Key = Layout('0');
+    let mut cached_button: Key  = Layout('0');
 
     let mut zone_lock: bool = false;
 
     loop 
     {
-        while let Some(ev) = gilrs.next_event()
+        while let Some(Event {id, event,  ..}) = gilrs.next_event()
         {
-            active_gamepad = gilrs.gamepad(ev.id);
+            active_gamepad = gilrs.gamepad(id);
             stick_chord.set(active_gamepad.value(gilrs::Axis::LeftStickX), active_gamepad.value(gilrs::Axis::LeftStickY));
             stick_note.set(active_gamepad.value(gilrs::Axis::RightStickX), active_gamepad.value(gilrs::Axis::RightStickY));
             
@@ -80,31 +78,52 @@ fn main()
 
             stick_note.print();
             println!("{:?}", cached_key);
-
+            
+            match event 
+            {
+                EventType::ButtonReleased(button, _) => 
+                {
+                    match key_map.get(&button)
+                    {
+                        Some(&value) => cached_button = value,
+                        _ => (),
+                    }
+                    if cached_button.eq(&F34)
+                    {
+                        enigo.mouse_click(MouseButton::Left);
+                    }
+                    if cached_button.eq(&F35)
+                    {
+                        enigo.mouse_click(MouseButton::Right);
+                    }
+                    enigo.key_click(Key::try_from(cached_button).unwrap());
+                }
+                _ => (),
+            }
         }
     }
 }
 
-// fn build_key_map() -> HashMap<Button, Combo>
-// {
-//     let temp: HashMap<Button, Combo> = HashMap::new();
-//     temp.insert(Button::South, Enter);
-//     temp.insert(Button::East, Space);
-//     temp.insert(Button::North, PageDown);
-//     temp.insert(Button::West, PageUp);
-//     temp.insert(Button::LeftTrigger, Right);
-//     temp.insert(Button::LeftTrigger2, Control);
-//     temp.insert(Button::RightTrigger, Left);
-//     temp.insert(Button::RightTrigger2, Alt);
-//     temp.insert(Button::Select, Tab);
-//     temp.insert(Button::Start, Escape);
-//     temp.insert(Button::DPadUp, UpArrow);
-//     temp.insert(Button::DPadDown, DownArrow);
-//     temp.insert(Button::DPadLeft, LeftArrow);
-//     temp.insert(Button::DPadRight, RightArrow);
+fn build_key_map() -> HashMap<Button, Key>
+{
+    let mut temp: HashMap<Button, Key> = HashMap::new();
+    temp.insert(Button::South, Return);
+    temp.insert(Button::East, Space);
+    temp.insert(Button::North, PageDown);
+    temp.insert(Button::West, PageUp);
+    temp.insert(Button::LeftTrigger, F35);
+    temp.insert(Button::LeftTrigger2, Control);
+    temp.insert(Button::RightTrigger, F34);
+    temp.insert(Button::RightTrigger2, Alt);
+    temp.insert(Button::Select, Tab);
+    temp.insert(Button::Start, Escape);
+    temp.insert(Button::DPadUp, UpArrow);
+    temp.insert(Button::DPadDown, DownArrow);
+    temp.insert(Button::DPadLeft, LeftArrow);
+    temp.insert(Button::DPadRight, RightArrow);
     
-//     temp
-// }
+    temp
+}
 
 fn build_chord_map() -> Vec<Vec<Key>>
 {
