@@ -49,11 +49,15 @@ fn main()
     let chord_map = build_chord_map();
     // let key_map = build_key_map();
     let mut gilrs = Gilrs::new().unwrap();
-    // let mut _enigo = Enigo::new();
+    let mut enigo = Enigo::new();
     let mut stick_chord: Joystick = Joystick::new(45.0, 45.0 , 0.25);
     let mut stick_note: Joystick = Joystick::new(45.0, 45.0 , 0.25);
     let mut active_gamepad: Gamepad;
+
     let mut cached_key: Key = Layout('0');
+
+    let mut zone_lock: bool = false;
+
     loop 
     {
         while let Some(ev) = gilrs.next_event()
@@ -61,16 +65,22 @@ fn main()
             active_gamepad = gilrs.gamepad(ev.id);
             stick_chord.set(active_gamepad.value(gilrs::Axis::LeftStickX), active_gamepad.value(gilrs::Axis::LeftStickY));
             stick_note.set(active_gamepad.value(gilrs::Axis::RightStickX), active_gamepad.value(gilrs::Axis::RightStickY));
-            // stick_chord.print();
+            
             if stick_note.active
             {
                 cached_key = chord_map[stick_chord.zone as usize][stick_note.zone as usize];
-                println!("zone:{} zone:{} letter prepared: {:?}", stick_chord.zone, stick_note.zone, cached_key);
+                zone_lock = true;
             }
-            else
+
+            if !stick_note.active && zone_lock
             {
-                println!("{:?}", cached_key);
+                enigo.key_click(cached_key);
+                zone_lock = false;
             }
+
+            stick_note.print();
+            println!("{:?}", cached_key);
+
         }
     }
 }
@@ -106,8 +116,9 @@ fn build_chord_map() -> Vec<Vec<Key>>
         vec![Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o')],
         vec![Layout('b'), Layout('x'), Layout('f'), Layout('v'), Layout('g'), Layout('k'), Layout('p'), Layout('z')],
         vec![Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o')],
-        vec![Layout('0'), Layout('1'), Layout('2'), Layout('3'), Layout('4'), Layout('5'), Layout('6'), Layout('7'), Layout('8'), Layout('9') ],
-        vec![Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o'), Layout('o')]
+        vec![Space, Space, Space, Space, Space, Space, Space, Space],
+        vec![Layout('0'), Layout('1'), Layout('2'), Layout('3'), Layout('4'), Layout('5'), Layout('6'), Layout('7'), Layout('8'), Layout('9') ]
     ];
     temp
 }
+
