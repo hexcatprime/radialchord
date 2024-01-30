@@ -54,7 +54,7 @@ impl Joystick {
             self.axis_x, self.axis_y, self.angle, self.zone,self.zone_cached, self.active
         );
     }
-    pub fn virtual_selection(&self, input_vector_length: usize) -> usize
+    pub fn virtual_selection(&mut self, input_vector_length: usize) -> usize
     {
         let last_zone: i32 = (360/self.zone_angle as i32)-1;
         let max_layer: i32 = (input_vector_length as i32- 1)/last_zone;
