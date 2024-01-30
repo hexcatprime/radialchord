@@ -1,40 +1,40 @@
 use enigo::{keycodes::Key::*, *};
 use gilrs::{ev::filter::Repeat, Button, EventType, Gamepad, Gilrs};
-use std::{collections::HashMap, f32::consts::PI};
+use std::{char::MAX, collections::HashMap, f32::consts::PI};
 
 const MOUSE_MULTIPLIER: f32 = 5.0;
 struct Joystick {
     zone_angle: f32,
     zone_offset: f32,
-    zone_deadzone: f32,
+    deadzone: f32,
     axis_x: f32,
     axis_y: f32,
     angle: f32,
     zone: i32,
-    cached_zone: i32,
-    virtual_zone: i32,
+    zone_cached: i32,
+    zone_virtual_layer: i32,
     active: bool,
 }
 
 impl Joystick {
-    pub fn new(zone_angle: f32, zone_offset: f32, zone_deadzone: f32) -> Self {
+    pub fn new(zone_angle: f32, zone_offset: f32, deadzone: f32) -> Self {
         let axis_x: f32 = 0.0;
         let axis_y: f32 = 0.0;
         let angle: f32 = 0.0;
         let zone: i32 = 0;
-        let cached_zone: i32 = 0;
-        let virtual_zone: i32 = 0;
+        let zone_cached: i32 = 0;
+        let zone_virtual_layer: i32 = 0;
         let active: bool = false;
         Joystick {
             zone_angle,
             zone_offset,
-            zone_deadzone,
+            deadzone,
             axis_x,
             axis_y,
             angle,
             zone,
-            cached_zone,
-            virtual_zone,
+            zone_cached,
+            zone_virtual_layer,
             active,
         }
     }
@@ -43,19 +43,31 @@ impl Joystick {
         self.axis_y = axis_y_unclamped.clamp(-1.0, 1.0);
         self.angle = (self.axis_y.atan2(self.axis_x) * (180.0 / PI) + 360.0) % 360.0;
         if self.zone != ((self.angle) / self.zone_angle) as i32 {
-            self.cached_zone = self.zone;
+            self.zone_cached = self.zone;
         }
         self.zone = ((self.angle) / self.zone_angle) as i32;
-        self.active = self.zone_deadzone <= (self.axis_x.powi(2) + self.axis_y.powi(2));
+        self.active = self.deadzone <= (self.axis_x.powi(2) + self.axis_y.powi(2));
     }
     pub fn print(&self) {
         print!(
             "\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})\tCached Zone: ({:2})\tActive?: ({})",
-            self.axis_x, self.axis_y, self.angle, self.zone,self.cached_zone, self.active
+            self.axis_x, self.axis_y, self.angle, self.zone,self.zone_cached, self.active
         );
     }
-}
-
+    pub fn virtual_selection(&self, input_vector_length: usize) -> usize
+    {
+        let last_zone: i32 = (360/self.zone_angle as i32)-1;
+        let max_layer: i32 = (input_vector_length as i32- 1)/last_zone;
+        if self.zone == 0 && self.zone_cached == last_zone && self.zone_virtual_layer != max_layer
+        {
+            self.zone_virtual_layer += 1;
+        } else if self.zone == last_zone && self.zone_cached == 0 && self.zone_virtual_layer != 0
+        {
+            self.zone_virtual_layer -= 1;
+        }
+        (self.zone + (self.zone_virtual_layer*last_zone)) as usize
+    }
+}          
 fn main() {
     let key_map = build_key_map();
     let chord_map = build_chord_map();
@@ -102,7 +114,7 @@ fn main() {
                         enigo.mouse_scroll_x((-stick_note.axis_x * MOUSE_MULTIPLIER) as i32);
                         enigo.mouse_scroll_y((-stick_note.axis_y * MOUSE_MULTIPLIER) as i32);
                     } else if stick_note.active {
-                        cached_key = chord_map[stick_chord.zone as usize][stick_note.zone as usize];
+                        cached_key = chord_map[stick_chord.virtual_selection(chord_map.len())][stick_note.virtual_selection(chord_map[stick_chord.virtual_selection(chord_map.len())].len())];
                         zone_lock = true;
                     } else if zone_lock {
                         enigo.key_click(cached_key);
