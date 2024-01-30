@@ -11,6 +11,8 @@ struct Joystick {
     axis_y: f32,
     angle: f32,
     zone: i32,
+    cached_zone: i32,
+    virtual_zone: i32,
     active: bool,
 }
 
@@ -20,6 +22,8 @@ impl Joystick {
         let axis_y: f32 = 0.0;
         let angle: f32 = 0.0;
         let zone: i32 = 0;
+        let cached_zone: i32 = 0;
+        let virtual_zone: i32 = 0;
         let active: bool = false;
         Joystick {
             zone_angle,
@@ -29,6 +33,8 @@ impl Joystick {
             axis_y,
             angle,
             zone,
+            cached_zone,
+            virtual_zone,
             active,
         }
     }
@@ -36,13 +42,16 @@ impl Joystick {
         self.axis_x = axis_x_unclamped.clamp(-1.0, 1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0, 1.0);
         self.angle = (self.axis_y.atan2(self.axis_x) * (180.0 / PI) + 360.0) % 360.0;
+        if self.zone != ((self.angle) / self.zone_angle) as i32 {
+            self.cached_zone = self.zone;
+        }
         self.zone = ((self.angle) / self.zone_angle) as i32;
         self.active = self.zone_deadzone <= (self.axis_x.powi(2) + self.axis_y.powi(2));
     }
     pub fn print(&self) {
         print!(
-            "\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2}, \tActive?: ({})",
-            self.axis_x, self.axis_y, self.angle, self.zone, self.active
+            "\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})\tCached Zone: ({:2})\tActive?: ({})",
+            self.axis_x, self.axis_y, self.angle, self.zone,self.cached_zone, self.active
         );
     }
 }
@@ -143,48 +152,13 @@ fn build_chord_map() -> Vec<Vec<Key>> {
             Layout('8'),
             Layout('9'),
         ],
-        vec![
-            Layout('o'),
-            Layout('a'),
-            Layout('t'),
-            Layout('e'),
-        ],
-        vec![
-            Layout('i'),
-            Layout('n'),
-            Layout('s'),
-            Layout('h'),
-        ],
-        vec![
-            Layout('r'),
-            Layout('d'),
-            Layout('l'),
-            Layout('v'),
-        ],
-        vec![
-            Layout('c'),
-            Layout('w'),
-            Layout('m'),
-            Layout('f'),
-        ],
-        vec![
-            Layout('y'),
-            Layout('g'),
-            Layout('b'),
-            Layout('p'),
-        ],
-        vec![
-            Layout('v'),
-            Layout('k'),
-            Layout('x'),
-            Layout('j'),
-        ],
-        vec![
-            Layout('q'),
-            Layout('z'),
-            Layout(','),
-            Layout('.'),
-        ],
+        vec![Layout('o'), Layout('a'), Layout('t'), Layout('e')],
+        vec![Layout('i'), Layout('n'), Layout('s'), Layout('h')],
+        vec![Layout('r'), Layout('d'), Layout('l'), Layout('v')],
+        vec![Layout('c'), Layout('w'), Layout('m'), Layout('f')],
+        vec![Layout('y'), Layout('g'), Layout('b'), Layout('p')],
+        vec![Layout('v'), Layout('k'), Layout('x'), Layout('j')],
+        vec![Layout('q'), Layout('z'), Layout(','), Layout('.')],
         vec![
             Layout('['),
             Layout(']'),
