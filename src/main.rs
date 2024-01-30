@@ -45,13 +45,13 @@ impl Joystick {
         self.axis_x = axis_x_unclamped.clamp(-1.0, 1.0);
         self.axis_y = axis_y_unclamped.clamp(-1.0, 1.0);
         self.angle = (self.axis_y.atan2(self.axis_x) * (180.0 / PI) + 360.0) % 360.0;
-        if self.zone != ((self.angle) / self.zone_angle) as i32 {
+        if self.zone != ((self.angle + self.zone_offset) % 360.0 / self.zone_angle) as i32 {
             self.zone_cached = self.zone;
             self.zone_changed = true;
         } else {
             self.zone_changed = false;
         }
-        self.zone = ((self.angle) / self.zone_angle) as i32;
+        self.zone = ((self.angle + self.zone_offset) % 360.0 / self.zone_angle) as i32;
         self.active = self.deadzone <= (self.axis_x.powi(2) + self.axis_y.powi(2));
     }
     pub fn print(&self) {
