@@ -76,27 +76,31 @@ fn main() {
                     Some(&value) => enigo.key_up(Key::try_from(value).unwrap()),
                     _ => (),
                 },
+                EventType::AxisChanged(..) => {
+                    stick_chord.set(
+                        gilrs.gamepad(ev.id).value(gilrs::Axis::LeftStickX),
+                        gilrs.gamepad(ev.id).value(gilrs::Axis::LeftStickY),
+                    );
+                    stick_note.set(
+                        gilrs.gamepad(ev.id).value(gilrs::Axis::RightStickX),
+                        gilrs.gamepad(ev.id).value(gilrs::Axis::RightStickY),
+                    );
+                    if context_lock {
+                        enigo.mouse_move_relative(
+                            (stick_chord.axis_x * MOUSE_MULTIPLIER) as i32,
+                            -(stick_chord.axis_y * MOUSE_MULTIPLIER) as i32,
+                        );
+                        enigo.mouse_scroll_x((-stick_note.axis_x * MOUSE_MULTIPLIER) as i32);
+                        enigo.mouse_scroll_y((-stick_note.axis_y * MOUSE_MULTIPLIER) as i32);
+                    } else if stick_note.active {
+                        cached_key = chord_map[stick_chord.zone as usize][stick_note.zone as usize];
+                        zone_lock = true;
+                    } else if zone_lock {
+                        enigo.key_click(cached_key);
+                        zone_lock = false;
+                    }
+                }
                 _ => (),
-            }
-            stick_chord.set(
-                gilrs.gamepad(ev.id).value(gilrs::Axis::LeftStickX),
-                gilrs.gamepad(ev.id).value(gilrs::Axis::LeftStickY),
-            );
-            stick_note.set(
-                gilrs.gamepad(ev.id).value(gilrs::Axis::RightStickX),
-                gilrs.gamepad(ev.id).value(gilrs::Axis::RightStickY),
-            );
-            if context_lock {
-                enigo.mouse_move_relative(
-                    (stick_chord.axis_x * MOUSE_MULTIPLIER)  as i32,
-                    -(stick_chord.axis_y * MOUSE_MULTIPLIER) as i32,
-                );
-            } else if stick_note.active {
-                cached_key = chord_map[stick_chord.zone as usize][stick_note.zone as usize];
-                zone_lock = true;
-            } else if zone_lock {
-                enigo.key_click(cached_key);
-                zone_lock = false;
             }
         }
         stick_chord.print();
