@@ -68,7 +68,7 @@ impl Joystick {
         } else if self.zone == last_zone && self.zone_cached == 0 && self.zone_virtual_layer != 0 && self.zone_changed{
             self.zone_virtual_layer -= 1;
         }
-        (self.zone + (self.zone_virtual_layer * last_zone)).min(input_vector_length as i32 - 1)
+        (self.zone + (self.zone_virtual_layer * last_zone)+self.zone_virtual_layer).min(input_vector_length as i32 - 1)
             as usize
     }
 }
