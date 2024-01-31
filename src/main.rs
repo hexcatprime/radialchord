@@ -56,22 +56,15 @@ impl Joystick {
         self.zone = ((self.angle + self.zone_offset) % 360.0 / self.zone_angle) as i32;
         self.active = self.deadzone <= (self.axis_x.powi(2) + self.axis_y.powi(2));
     }
-    pub fn print(&self) {
-        print!(
-            "\rAxes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})\tCached Zone: ({:2})\tActive?: ({})",
-            self.axis_x, self.axis_y, self.angle, self.zone,self.zone_cached, self.active
-        );
-    }
     pub fn virtual_selection(&mut self, input_vector_length: usize) -> usize {
         let last_zone: i32 = 360/self.zone_angle as i32;
         let max_layer: i32 = (input_vector_length as i32- 1) / last_zone;
-        if self.zone == 0 && self.zone_cached == last_zone-1 && self.zone_virtual_layer != max_layer && self.zone_changed{
+        if self.zone == 0 && self.zone_cached == last_zone-1 && self.zone_virtual_layer < max_layer && self.zone_changed{
             self.zone_virtual_layer += 1;
-        } else if self.zone == last_zone-1 && self.zone_cached == 0 && self.zone_virtual_layer != 0 && self.zone_changed{
+        } else if self.zone == last_zone-1 && self.zone_cached == 0 && self.zone_virtual_layer > 0 && self.zone_changed{
             self.zone_virtual_layer -= 1;
         }
-        // println!("lz{} - ml{} - ivl{}", last_zone, max_layer, input_vector_length-1);
-        (self.zone + (self.zone_virtual_layer * last_zone-1)+self.zone_virtual_layer).min(input_vector_length as i32 - 1)
+        (self.zone + (self.zone_virtual_layer * last_zone)).min(input_vector_length as i32 - 1)
             as usize
     }
 }
@@ -125,16 +118,6 @@ fn main() {
                         let note_map_index: usize = stick_note.virtual_selection(chord_map[chord_map_index].len());
                         cached_key = chord_map[chord_map_index][note_map_index];
                         zone_lock = true;
-                        print!(
-                            "\rLZONE:({})({})\tLLAYER:({})\tRZONE:({})({})\tRLAYER:({})\t{:?}",
-                            stick_chord.zone,
-                            chord_map_index,
-                            stick_chord.zone_virtual_layer,
-                            stick_note.zone,
-                            note_map_index,
-                            stick_note.zone_virtual_layer,
-                            cached_key
-                        );
                     } else if zone_lock {
                         enigo.key_click(cached_key);
                         zone_lock = false;
@@ -142,6 +125,14 @@ fn main() {
                 }
                 _ => (),
             }
+            println!(
+                "CHORD Axes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})\tCached Zone: ({:2})\tActive?: ({})\tVirtual Layer: ({}) ",
+                stick_chord.axis_x, stick_chord.axis_y, stick_chord.angle, stick_chord.zone,stick_chord.zone_cached, stick_chord.active, stick_chord.zone_virtual_layer
+            );
+            println!(
+                "NOTE Axes: ({:+05.3},{:+05.3})\tAngle: ({:+08.3})\tZone: ({:2})\tCached Zone: ({:2})\tActive?: ({})\tVirtual Layer: ({})\tCached Key: ({:?}) ",
+                stick_note.axis_x, stick_note.axis_y, stick_note.angle, stick_note.zone,stick_note.zone_cached, stick_note.active, stick_note.zone_virtual_layer, cached_key
+            );
         }
     }
 }
